@@ -1,13 +1,13 @@
 <template>
   <div class="page">
     <p class="top-tool">
-      <el-input v-model="artileTitle" placeholder="文章标题" clearable size="large" style="width:45%"></el-input>
+      <el-input v-model="articleTitle" placeholder="文章标题" clearable size="large" style="width:45%"></el-input>
       <el-select v-model="typeId" placeholder="请选择文章类型">
         <el-option
           v-for="item in types"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+          :key="item.typeId"
+          :label="item.type"
+          :value="item.typeId"
         ></el-option>
       </el-select>
       <el-select v-model="classificationId" placeholder="请选择具体分类">
@@ -29,24 +29,51 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { getClassifications } from '@/api/writing'
 import Tinymce from "@/components/Tinymce";
 export default {
   name: "writing",
   components: { Tinymce },
   computed: {
-    ...mapGetters(["name"])
+    
   },
   data() {
     return {
       content: `<h1 style="text-align: center;">开始编写内容……</h1>`,   
+      typeId:"",
       types: "",
       classifications: "", 
       articleTitle: "",
       type:"",
       classification:"",
-      articleId:""
+      articleId:"",
+      classificationId:''
     };
-  }
+  },
+   mounted() {
+      this.getC();
+   },
+   methods:{
+     getC(){
+        getClassifications().then(response => {
+        var res = response;
+        console.log(res);
+        if(res.result.code==0){
+          this.types = res.array;
+        }else if(res.result.code==1){
+          this.$message({
+            type: "warning",
+            message: res.result.info
+          });
+        }else if(res.result.code==-1){
+          this.$message({
+            type: "warning",
+            message: res.result.developInfo
+          });
+        }
+      })
+     }
+   }
 };
 </script>
 
