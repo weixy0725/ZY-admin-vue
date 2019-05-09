@@ -1,21 +1,16 @@
 <template>
   <div class="page">
     <p class="top-tool">
-      <el-input v-model="articleTitle" placeholder="文章标题" clearable size="large" style="width:45%"></el-input>
-      <el-select v-model="typeId" placeholder="请选择文章类型">
-        <el-option
-          v-for="item in types"
-          :key="item.typeId"
-          :label="item.type"
-          :value="item.typeId"
-        ></el-option>
+      <el-input v-model="articleTitle" placeholder="文章标题" clearable size="large" style="width:30%"></el-input>
+      <el-select v-model="typeId" placeholder="请选择文章类型" @change="changeType">
+        <el-option v-for="item in types" :key="item.typeId" :label="item.type" :value="item.typeId"></el-option>
       </el-select>
       <el-select v-model="classificationId" placeholder="请选择具体分类">
         <el-option
           v-for="item in classifications"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+          :key="item.classificationId"
+          :label="item.classification"
+          :value="item.classificationId"
         ></el-option>
       </el-select>
       <el-button type="primary" plain size="large">编辑分类</el-button>
@@ -29,51 +24,63 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { getClassifications } from '@/api/writing'
+import { getTypes, getClassifications } from "@/api/writing";
 import Tinymce from "@/components/Tinymce";
 export default {
   name: "writing",
   components: { Tinymce },
-  computed: {
-    
-  },
+  computed: {},
   data() {
     return {
-      content: `<h1 style="text-align: center;">开始编写内容……</h1>`,   
-      typeId:"",
+      content: `<h1 style="text-align: center;">开始编写内容……</h1>`,
+      typeId: "",
       types: "",
-      classifications: "", 
+      classifications: "",
       articleTitle: "",
-      type:"",
-      classification:"",
-      articleId:"",
-      classificationId:''
+      type: "",
+      classification: "",
+      articleId: "",
+      classificationId: ""
     };
   },
-   mounted() {
-      this.getC();
-   },
-   methods:{
-     getC(){
-        getClassifications().then(response => {
+  mounted() {
+    this.getT();
+  },
+  methods: {
+    getT() {
+      getTypes().then(response => {
         var res = response;
         console.log(res);
-        if(res.result.code==0){
+        if (res.result.code == 0) {
           this.types = res.array;
-        }else if(res.result.code==1){
-          this.$message({
-            type: "warning",
-            message: res.result.info
-          });
-        }else if(res.result.code==-1){
-          this.$message({
-            type: "warning",
-            message: res.result.developInfo
-          });
         }
-      })
-     }
-   }
+        // }else if(res.result.code==1){
+        //   this.$message({
+        //     type: "warning",
+        //     message: res.result.info
+        //   });
+        // }else if(res.result.code==-1){
+        //   this.$message({
+        //     type: "warning",
+        //     message: res.result.developInfo
+        //   });
+        // }
+      });
+    },
+
+    changeType() {
+      var params = {};
+      params["typeId"] = this.typeId;
+      this.classification = "";
+      this.classificationId = "";
+      getClassifications(params).then(response => {
+        var res = response;
+        if (res.result.code == 0) {
+          this.classifications = res.array;
+        }
+      });
+    }
+  }
 };
 </script>
 

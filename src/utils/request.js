@@ -48,14 +48,20 @@ service.interceptors.response.use(
 
     // if the custom code is not 20000, it is judged as an error.
     if (res.result.code != 0) {
+      var message='';
+      if(res.result.code==1){
+         message = res.result.info;
+      }else if(res.result.code==-1){
+         message = res.result.developInfo;
+      }
       Message({
-        message: res.message || 'error',
+        message: message,
         type: 'error',
         duration: 5 * 1000
       })
 
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
+      /*if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
         // to re-login
         MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
           confirmButtonText: 'Re-Login',
@@ -66,8 +72,8 @@ service.interceptors.response.use(
             location.reload()
           })
         })
-      }
-      return Promise.reject(res.message || 'error')
+      }*/
+      return Promise.reject(Message())
     } else {
       return res
     }
@@ -79,7 +85,7 @@ service.interceptors.response.use(
       type: 'error',
       duration: 5 * 1000
     })
-    return Promise.reject(error)
+    return Promise.reject(Message())
   }
 )
 
