@@ -12,7 +12,7 @@
         :on-success="handleSuccess"
         :before-upload="beforeUpload"
         class="editor-slide-upload"
-        action="https://httpbin.org/post"
+        :action="uploadPictureURL"
         list-type="picture-card"
       >
         <el-button size="small" type="primary">
@@ -31,6 +31,7 @@
 
 <script>
 // import { getToken } from 'api/qiniu'
+//import {uploadPictrue} from '@/api/writing'
 
 export default {
   name: 'EditorSlideUpload',
@@ -39,12 +40,13 @@ export default {
       type: String,
       default: '#1890ff'
     }
-  },
+  }, 
   data() {
     return {
       dialogVisible: false,
       listObj: {},
-      fileList: []
+      fileList: [],
+      uploadPictureURL:process.env.VUE_APP_BASE_API+"/articleManagement/uploadPicture"
     }
   },
   methods: {
@@ -67,7 +69,8 @@ export default {
       const objKeyArr = Object.keys(this.listObj)
       for (let i = 0, len = objKeyArr.length; i < len; i++) {
         if (this.listObj[objKeyArr[i]].uid === uid) {
-          this.listObj[objKeyArr[i]].url = response.files.file
+          console.log(response);
+          this.listObj[objKeyArr[i]].url = "http://localhost:8089/"+response.object.url;
           this.listObj[objKeyArr[i]].hasSuccess = true
           return
         }

@@ -14,3 +14,12 @@ export function getClassifications(params) {
     params
   })
 }
+
+export function saveArticle(data){
+  return request({
+    url: '/articleManagement/article',
+    method: 'post',
+    data
+  })
+
+}

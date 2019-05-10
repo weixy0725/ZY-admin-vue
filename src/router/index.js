@@ -64,7 +64,7 @@ export const constantRoutes = [
         path: 'writing',
         name: 'writing',
         component:  () => import('@/views/writing/index'),
-        meta: { title: '写作', icon: 'writing' }
+        meta: { title: '发布', icon: 'writing' }
       }]
   },
 
