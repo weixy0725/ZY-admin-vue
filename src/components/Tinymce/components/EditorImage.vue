@@ -1,7 +1,7 @@
 <template>
   <div class="upload-container">
-    <el-button :style="{background:color,borderColor:color}" icon="el-icon-upload" size="mini" type="primary" @click=" dialogVisible=true">
-      上传图片
+    <el-button :style="{background:color,borderColor:color,width:width}" icon="el-icon-upload" :size="size" :type="type" @click=" dialogVisible=true">
+      {{name}}
     </el-button>
     <el-dialog :visible.sync="dialogVisible">
       <el-upload
@@ -39,6 +39,22 @@ export default {
     color: {
       type: String,
       default: '#1890ff'
+    },
+    name:{
+      type:String,
+      default:'上传图片'
+    },
+    type:{
+      type:String,
+      default:'primary'
+    },
+    size:{
+      type:String,
+      default:'mini'
+    },
+    width:{
+      type:String,
+      default:'100%'
     }
   }, 
   data() {
