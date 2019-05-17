@@ -3,7 +3,8 @@
     <el-row>
       <el-col :span="3" :offset="2">
         <el-row class="cover-img">
-            <img>{{imgText}}</img>
+            <span v-if="coverUrl==''">暂无图片</span>
+            <img v-if="coverUrl!=''" :src="coverUrl"></img>
         </el-row>
       </el-col>
       <el-col :span="16" :offset="1">
@@ -66,7 +67,7 @@
             <el-button type="primary" plain size="large" style="width:90%">编辑分类</el-button>
           </el-col>
           <el-col :span="4">
-            <el-button type="primary" size="large" style="width:100%">保存文章内容</el-button>
+            <el-button type="primary" size="large" style="width:100%" @click="saveArticle">保存文章内容</el-button>
           </el-col>
         </el-row>
         <el-row v-else>
@@ -140,7 +141,7 @@ export default {
       classificationId: "",
       isOriginal: "",
       textarea: "",
-      imgText:"暂无封面"
+      coverUrl:""
     };
   },
   mounted() {
@@ -162,6 +163,7 @@ export default {
       params["typeId"] = this.typeId;
       this.classification = "";
       this.classificationId = "";
+      this.coverUrl="";
       getClassifications(params).then(response => {
         var res = response;
         if (res.result.code == 0) {
@@ -188,10 +190,21 @@ export default {
       formData.append("classificationId", this.classificationId);
       formData.append("isOriginal", this.isOriginal);
       formData.append("article", this.content);
+      if(this.coverUrl!=''){
+        var spilt =this.coverUrl.split('/');
+        formData.append("cover",spilt[spilt.length-1]);
+      }
       saveArticle(formData).then(response => {
         var res = response;
         if (res.result.code === 0) {
-          console.log("-----------------");
+         this.$message.success("上传文章成功！");
+         this.articleTitle = "";
+         this.textarea = "";
+         this.typeId ="";
+         this.classificationId = "";
+         this.isOriginal = "" ;
+         this.content = "";
+         this.coverUrl=""
         }
       });
     },
@@ -200,11 +213,7 @@ export default {
       if (arr.length > 1) {
         this.$message.error("设置失败，封面图片只能设置一张！");
       }
-      arr.forEach(v => {
-        window.tinymce
-          .get(_this.tinymceId)
-          .insertContent(`<img class="wscnph" src="${v.url}" >`);
-      });
+      this.coverUrl=arr[0].url;
     }
   }
 };
@@ -235,5 +244,11 @@ export default {
   box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
   background: #fff;
   border-radius: 4px;
+  color:#cacbcc;
+}
+
+.cover-img img{
+  height: 175px;
+  width: 90%;
 }
 </style>
