@@ -22,3 +22,19 @@ export function saveArticle(data) {
     data
   })
 }
+
+export function getArticle(params) {
+  return request({
+    url: '/articleManagement/article',
+    method: 'get',
+    params
+  })
+}
+
+export function updateArticle(data) {
+  return request({
+    url: '/articleManagement/article',
+    method: 'put',
+    data
+  })
+}

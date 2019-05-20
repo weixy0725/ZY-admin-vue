@@ -67,7 +67,8 @@
             <el-button type="primary" plain size="large" style="width:90%">编辑分类</el-button>
           </el-col>
           <el-col :span="4">
-            <el-button type="primary" size="large" style="width:100%" @click="saveArticle">保存文章内容</el-button>
+            <el-button type="primary" size="large" style="width:100%" @click="saveArticle" v-if="isSave==true">保存文章内容</el-button>
+             <el-button type="primary" size="large" style="width:100%" @click="updateArticle" v-else>更新文章内容</el-button>
           </el-col>
         </el-row>
         <el-row v-else>
@@ -106,7 +107,8 @@
             <el-button type="primary" plain size="large" style="width:90%">编辑分类</el-button>
           </el-col>
           <el-col :span="4">
-            <el-button type="primary" size="large" style="width:100%" @click="saveArticle">保存文章内容</el-button>
+            <el-button type="primary" size="large" style="width:100%" @click="saveArticle" v-if="isSave==true">保存文章内容</el-button>
+            <el-button type="primary" size="large" style="width:100%" @click="updateArticle" v-else>更新文章内容</el-button>
           </el-col>
         </el-row>
       </el-col>
@@ -121,7 +123,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { getTypes, getClassifications, saveArticle } from "@/api/writing";
+import { getTypes, getClassifications, saveArticle,getArticle,updateArticle} from "@/api/writing";
 import Tinymce from "@/components/Tinymce";
 import editorImage from "@/components/Tinymce/components/EditorImage";
 export default {
@@ -141,12 +143,33 @@ export default {
       classificationId: "",
       isOriginal: "",
       textarea: "",
-      coverUrl:""
+      coverUrl:"",
+      isSave:true,
+      tempclassificationId:""
     };
   },
-  mounted() {
-    this.getT();
+  created(){
+     this.getT();
   },
+  mounted() {
+    this.getArticle();
+  },
+  watch: {
+      typeId(val) {
+        if(this.articleId!=""&&this.articleId!=undefined){
+         var params = {};
+         params["typeId"] = this.typeId;
+           getClassifications(params).then(response => {
+         var res = response;
+        if (res.result.code == 0) {
+          this.classifications = res.array;
+         }
+         });
+          this.classificationId=this.tempclassificationId+"";
+        }
+      }
+  },
+
   methods: {
     getT() {
       getTypes().then(response => {
@@ -214,6 +237,78 @@ export default {
         this.$message.error("设置失败，封面图片只能设置一张！");
       }
       this.coverUrl=arr[0].url;
+    },
+    getArticle(){
+      console.log(this.$route.query.articleId);
+      this.articleId=this.$route.query.articleId;
+      if(this.articleId!=""&&this.articleId!=undefined){
+         var params = {};
+         params["articleId"] = this.articleId;
+         getArticle(params).then(res=>{
+           if (res.result.code == 0) {
+            this.isSave=false;
+            this.articleTitle=res.object.articleName;
+            this.textarea=res.object.articleSummarize;
+            this.content=res.object.articleContent;
+            this.isOriginal=res.object.isOriginal+"";
+            if(res.object.cover!=null&&res.object.cover!=''){
+                this.coverUrl="http://localhost:8089/"+res.object.cover;
+            }
+            this.tempclassificationId = res.object.classificationId;  
+            this.typeId =res.object.typeId;
+          } else if (res.result.code == 1) {
+            this.$message({
+              type: "warning",
+              message: res.result.info
+            });
+          } else if (res.result.code == -1) {
+            this.$message({
+              type: "warning",
+              message: res.result.developInfo
+            });
+          }
+         })
+      }
+    },
+    updateArticle(){
+
+      let formData = new FormData();
+      if (
+        this.articleTitle == "" ||
+        this.textarea == "" ||
+        this.typeId == "" ||
+        this.classificationId == "" ||
+        this.isOriginal == "" ||
+        this.content == ""
+      ) {
+        alert("不可为空");
+      }
+      formData.append("articleId", this.articleId);
+      formData.append("articleName", this.articleTitle);
+      formData.append("articleSummarize", this.textarea);
+      formData.append("typeId", this.typeId);
+      formData.append("classificationId", this.classificationId);
+      formData.append("isOriginal", this.isOriginal);
+      formData.append("article", this.content);
+      if(this.coverUrl!=''){
+        var spilt =this.coverUrl.split('/');
+        formData.append("cover",spilt[spilt.length-1]);
+      }
+      updateArticle(formData).then(response => {
+        var res = response;
+        if (res.result.code === 0) {
+         this.$message.success("更新文章成功！");
+         this.articleId=""
+         this.articleTitle = "";
+         this.textarea = "";
+         this.typeId ="";
+         this.classificationId = "";
+         this.isOriginal = "" ;
+         this.content = "";
+         this.coverUrl="";
+        }
+      });
+
     }
   }
 };
