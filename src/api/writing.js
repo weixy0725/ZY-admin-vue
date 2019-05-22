@@ -38,3 +38,27 @@ export function updateArticle(data) {
     data
   })
 }
+
+export function addClassification(data) {
+  return request({
+    url: '/articleManagement/classification',
+    method: 'post',
+    data
+  })
+}
+
+export function updateClassification(data) {
+  return request({
+    url: '/articleManagement/classification',
+    method: 'put',
+    data
+  })
+}
+
+export function deleteClassification(data) {
+  return request({
+    url: '/articleManagement/classification',
+    method: 'delete',
+    data
+  })
+}

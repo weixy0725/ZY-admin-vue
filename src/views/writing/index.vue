@@ -157,7 +157,7 @@
       <el-form label-position="left" label-width="80px" :model="formAddClassification">
         <el-form-item label="文章类型">
           <el-select
-            v-model="addTypeId"
+            v-model="formAddClassification.typeId"
             placeholder="请选择文章类型"
             @change="changeAddType"
             style="width:100%"
@@ -175,26 +175,44 @@
         </el-form-item>
         <el-form-item>
           <div style="float:right">
-          <el-button @click>清 空</el-button>
-          <el-button type="primary" @click>新 增</el-button>
+            <el-button @click="formAddClassification.classification=''">清 空</el-button>
+            <el-button type="primary" @click="saveFun">新 增</el-button>
           </div>
         </el-form-item>
       </el-form>
       <div class="line"></div>
       <el-table :data="tableData" border style="width: 100%">
-        <el-table-column label="编号" width="180">
+        <el-table-column label="编号" width="120">
           <template slot-scope="scope">{{ scope.row.classificationId }}</template>
         </el-table-column>
         <el-table-column label="具体分类" width="180">
-           <template slot-scope="scope">{{ scope.row.classification }}</template>
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.classification" v-if="scope.$index==editFlagId"></el-input>
+            <span v-else>{{ scope.row.classification }}</span>
+          </template>
         </el-table-column>
         <el-table-column label="归属类型" width="180">
-           <template slot-scope="scope">{{ scope.row.type }}</template>
+          <template slot-scope="scope">{{ scope.row.type }}</template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column fixed="right" width="150" label="操作">
           <template slot-scope="scope">
-            <el-button type="primary" size="mini" @click="editFun(scope.row.classificationId)">编辑</el-button>
-            <el-button type="warning" size="mini" @click="deleteFun(scope.row.classificationId)">删除</el-button>
+            <div v-if="scope.$index==editFlagId">
+              <el-button
+                type="success"
+                size="mini"
+                @click="updateFun(scope.row.classificationId,scope.row.classification)"
+                plain
+              >保存</el-button>
+              <el-button type="info" size="mini" @click="editFlagId=-1" plain>取消</el-button>
+            </div>
+            <div v-else>
+              <el-button type="primary" size="mini" @click="editFun(scope.$index)">编辑</el-button>
+              <el-button
+                type="warning"
+                size="mini"
+                @click="deleteFun(scope.row.classificationId)"
+              >删除</el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -213,7 +231,10 @@ import {
   getClassifications,
   saveArticle,
   getArticle,
-  updateArticle
+  updateArticle,
+  updateClassification,
+  addClassification,
+  deleteClassification
 } from "@/api/writing";
 import Tinymce from "@/components/Tinymce";
 import editorImage from "@/components/Tinymce/components/EditorImage";
@@ -238,13 +259,14 @@ export default {
       isSave: true,
       tempclassificationId: "",
       dialogVisible: false,
-      addTypeId: "",
       newClassification: "",
       formAddClassification: {
         typeId: "",
         classification: ""
       },
-      tableData:''
+      tableData: [],
+      editClassification: "",
+      editFlagId: -1
     };
   },
   created() {
@@ -296,14 +318,13 @@ export default {
 
     changeAddType() {
       var params = {};
-      params["typeId"] = this.addTypeId;
+      params["typeId"] = this.formAddClassification.typeId;
       getClassifications(params).then(response => {
         var res = response;
         if (res.result.code == 0) {
           this.tableData = res.array;
         }
       });
-
     },
     handleClose() {
       this.dialogVisible = false;
@@ -419,6 +440,65 @@ export default {
           this.content = "";
           this.coverUrl = "";
         }
+      });
+    },
+    editFun(index) {
+      this.editFlagId = index;
+    },
+    updateFun(id, name) {
+      if (name == "" || name == null) {
+        this.$message.error("分类名不能为空！");
+      } else {
+        let formData = new FormData();
+        formData.append("classificationId", id);
+        formData.append("classification", name);
+        updateClassification(formData).then(response => {
+          var res = response;
+          if (res.result.code === 0) {
+            this.$message.success("更新具体分类成功！");
+            this.changeAddType();
+            this.editFlagId = -1;
+          }
+        });
+      }
+    },
+    saveFun() {
+      if (
+        this.formAddClassification.classification == "" ||
+        this.formAddClassification.classification == null
+      ) {
+        this.$message.error("分类名不能为空！");
+      } else {
+        let formData = new FormData();
+        formData.append("typeId", this.formAddClassification.typeId);
+        formData.append(
+          "classification",
+          this.formAddClassification.classification
+        );
+        addClassification(formData).then(response => {
+          var res = response;
+          if (res.result.code === 0) {
+            this.$message.success("新增具体分类成功！");
+            this.changeAddType();
+            this.formAddClassification.classification = "";
+          }
+        });
+      }
+    },
+    deleteFun(id) {
+      this.$confirm("确定删除该分类?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消"
+      }).then(() => {
+        let formData = new FormData();
+        formData.append("classificationId", id);
+        deleteClassification(formData).then(response => {
+          var res = response;
+          if (res.result.code === 0) {
+            this.$message.success("删除具体分类成功！");
+            this.changeAddType();
+          }
+        });
       });
     }
   }
