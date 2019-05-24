@@ -39,7 +39,7 @@
       <el-table-column label="发布时间" width="110" align="center">
         <template slot-scope="scope">{{ scope.row.datetime }}</template>
       </el-table-column>
-      <el-table-column align="center" prop="created_at" label="操作" width="200">
+      <el-table-column align="center" prop="created_at" label="操作" width="200" fixed="right">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="editFun(scope.row.articleId)">编辑</el-button>
           <el-button type="warning" size="mini" @click="deleteFun(scope.row.articleId)">删除</el-button>

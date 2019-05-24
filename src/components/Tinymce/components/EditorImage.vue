@@ -12,13 +12,14 @@
         :on-success="handleSuccess"
         :before-upload="beforeUpload"
         class="editor-slide-upload"
-        :action="uploadPictureURL"
+        :action="upload()"
         list-type="picture-card"
       >
         <el-button size="small" type="primary">
          点击上传
         </el-button>
       </el-upload>
+       <el-checkbox v-model="isMark">勾选为图片加水印</el-checkbox>
       <el-button @click="dialogVisible = false">
         取消
       </el-button>
@@ -62,10 +63,14 @@ export default {
       dialogVisible: false,
       listObj: {},
       fileList: [],
-      uploadPictureURL:process.env.VUE_APP_BASE_API+"/articleManagement/uploadPicture"
+      isMark:false,
+      uploadPictureURL:process.env.VUE_APP_BASE_API+"/articleManagement/uploadPicture"  
     }
   },
   methods: {
+    upload(){
+       return this.uploadPictureURL+"?isMark="+this.isMark;
+    },
     checkAllSuccess() {
       return Object.keys(this.listObj).every(item => this.listObj[item].hasSuccess)
     },

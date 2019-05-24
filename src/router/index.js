@@ -58,7 +58,7 @@ export const constantRoutes = [
   {
     path: '/writing',
     component:Layout,
-    redirect: '/writing',
+    // redirect: '/writing',
     children: [
       {
         path: 'writing',
@@ -71,7 +71,7 @@ export const constantRoutes = [
   {
     path: '/table',
     component: Layout,
-    redirect: '/table',
+    //redirect: '/table',
     children: [
       {
         path: 'table',
