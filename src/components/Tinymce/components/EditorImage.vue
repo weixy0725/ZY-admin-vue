@@ -19,7 +19,7 @@
          点击上传
         </el-button>
       </el-upload>
-       <el-checkbox v-model="isMark">勾选为图片加水印</el-checkbox>
+      <el-checkbox v-model="isMark">勾选为图片加水印</el-checkbox>
       <el-button @click="dialogVisible = false">
         取消
       </el-button>
@@ -91,7 +91,7 @@ export default {
       for (let i = 0, len = objKeyArr.length; i < len; i++) {
         if (this.listObj[objKeyArr[i]].uid === uid) {
           console.log(response);
-          this.listObj[objKeyArr[i]].url = "http://localhost:8089/"+response.object.url;
+          this.listObj[objKeyArr[i]].url = "http://39.105.221.186:80/"+response.object.url;
           this.listObj[objKeyArr[i]].hasSuccess = true
           return
         }

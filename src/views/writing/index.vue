@@ -53,14 +53,28 @@
             </el-select>
           </el-col>
           <el-col :span="4">
-            <editorImage
+            <!-- <editorImage
               color="#1890ff"
               class="editor-upload-btn"
               name="上传封面"
               @successCBK="imageSuccessCBK"
               size="large"
               width="90%"
-            />
+            />-->
+            <el-button size="large" type="primary"  icon="el-icon-upload" style="background:#1890ff;width:90%" @click="toggleShow">设置封面</el-button>
+            <my-upload
+              field="img"
+              @crop-success="cropSuccess"
+              @crop-upload-success="cropUploadSuccess"
+              @crop-upload-fail="cropUploadFail"
+              v-model="show"
+              :width="300"
+              :height="256"
+              :url="upload()"
+              :params="params"
+              :headers="headers"
+              img-format="png"
+            ></my-upload>
           </el-col>
           <el-col :span="4">
             <el-button
@@ -225,6 +239,7 @@
 </template>
 
 <script>
+import myUpload from "vue-image-crop-upload";
 import { mapGetters } from "vuex";
 import {
   getTypes,
@@ -240,7 +255,7 @@ import Tinymce from "@/components/Tinymce";
 import editorImage from "@/components/Tinymce/components/EditorImage";
 export default {
   name: "writing",
-  components: { Tinymce, editorImage },
+  components: { Tinymce, editorImage,myUpload },
   computed: {},
   data() {
     return {
@@ -266,7 +281,13 @@ export default {
       },
       tableData: [],
       editClassification: "",
-      editFlagId: -1
+      editFlagId: -1,
+      uploadPictureURL:process.env.VUE_APP_BASE_API+"/articleManagement/uploadPictureCover",
+      show: false,
+			params: {
+			},
+			headers: {
+			}
     };
   },
   created() {
@@ -292,6 +313,9 @@ export default {
   },
 
   methods: {
+    upload(){
+       return this.uploadPictureURL;
+    },
     getT() {
       getTypes().then(response => {
         var res = response;
@@ -360,7 +384,7 @@ export default {
           this.typeId = "";
           this.classificationId = "";
           this.isOriginal = "";
-          this.content = "";
+          this.content = "<p style='text-align: center;'>开始编写内容……</p>";
           this.coverUrl = "";
         }
       });
@@ -386,7 +410,7 @@ export default {
             this.content = res.object.articleContent;
             this.isOriginal = res.object.isOriginal + "";
             if (res.object.cover != null && res.object.cover != "") {
-              this.coverUrl = "http://localhost:8089/" + res.object.cover;
+              this.coverUrl = "http://39.105.221.186:80/" + res.object.cover;
             }
             this.tempclassificationId = res.object.classificationId;
             this.typeId = res.object.typeId;
@@ -500,7 +524,21 @@ export default {
           }
         });
       });
-    }
+    },
+      toggleShow() {
+				this.show = !this.show;
+			},
+			cropSuccess(imgDataUrl, field){
+				console.log('-------- crop success --------');
+			},
+			cropUploadSuccess(jsonData, field){
+        console.log('-------- upload success --------');
+        console.log(jsonData);
+				this.coverUrl = "http://39.105.221.186:80/" + jsonData.object.url;
+			},
+			cropUploadFail(status, field){
+				this.$message.error("封面上传失败！");
+			}
   }
 };
 </script>
