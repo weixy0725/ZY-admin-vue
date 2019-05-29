@@ -196,19 +196,19 @@
       </el-form>
       <div class="line"></div>
       <el-table :data="tableData" border style="width: 100%">
-        <el-table-column label="编号" width="120">
+        <el-table-column label="编号" width="200">
           <template slot-scope="scope">{{ scope.row.classificationId }}</template>
         </el-table-column>
-        <el-table-column label="具体分类" width="180">
+        <el-table-column label="具体分类" width="200">
           <template slot-scope="scope">
             <el-input v-model="scope.row.classification" v-if="scope.$index==editFlagId"></el-input>
             <span v-else>{{ scope.row.classification }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="归属类型" width="180">
+        <el-table-column label="归属类型" width="200">
           <template slot-scope="scope">{{ scope.row.type }}</template>
         </el-table-column>
-        <el-table-column fixed="right" width="150" label="操作">
+        <el-table-column fixed="right" width="160" label="操作">
           <template slot-scope="scope">
             <div v-if="scope.$index==editFlagId">
               <el-button
