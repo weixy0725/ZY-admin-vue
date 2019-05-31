@@ -50,6 +50,7 @@
               <el-option key="0" label="转载" value="0"></el-option>
               <el-option key="2" label="练习" value="2"></el-option>
               <el-option key="3" label="临摹" value="3"></el-option>
+              <el-option key="4" label="学习" value="4"></el-option>
             </el-select>
           </el-col>
           <el-col :span="4">
@@ -132,6 +133,7 @@
             <el-select v-model="isOriginal" placeholder="请选择原创/转载/..." style="width:90%">
               <el-option key="1" label="原创" value="1"></el-option>
               <el-option key="0" label="转载" value="0"></el-option>
+              <el-option key="4" label="学习" value="4"></el-option>
             </el-select>
           </el-col>
           <el-col :span="5">

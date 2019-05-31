@@ -28,6 +28,7 @@
           <span v-if="scope.row.isOriginal==1">原创</span>
           <span v-if="scope.row.isOriginal==2">练习</span>
           <span v-if="scope.row.isOriginal==3">临摹</span>
+          <span v-if="scope.row.isOriginal==4">学习</span>
         </template>
       </el-table-column>
       <el-table-column label="浏览次数" width="110" align="center">
