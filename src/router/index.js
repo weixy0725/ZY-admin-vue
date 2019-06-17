@@ -64,7 +64,7 @@ export const constantRoutes = [
         path: 'writing',
         name: 'writing',
         component:  () => import('@/views/writing/index'),
-        meta: { title: '发布', icon: 'writing' }
+        meta: { title: '发布文章', icon: 'writing' }
       }]
   },
 
@@ -78,6 +78,19 @@ export const constantRoutes = [
         name: 'Table',
         component: () => import('@/views/table/index'),
         meta: { title: '文章列表', icon: 'table' }
+      }
+    ]
+  },
+  {
+    path: '/message',
+    component: Layout,
+    //redirect: '/table',
+    children: [
+      {
+        path: 'message',
+        name: 'Message',
+        component: () => import('@/views/message/index'),
+        meta: { title: '信息列表', icon: 'table' }
       }
     ]
   },

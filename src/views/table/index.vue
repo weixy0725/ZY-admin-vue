@@ -51,7 +51,7 @@
       <el-col :span="4" :offset="10">
         <el-pagination
           background
-          layout="total,prev,pager,next,jumper"
+          layout="sizes,total,prev,pager,next,jumper"
           :total="total"
           :current-page="pageNumber"
           :page-sizes="[10, 20, 30]"
