@@ -9,8 +9,11 @@
       </el-col>
       <el-col :span="16" :offset="1">
         <el-row>
-          <el-col :span="24">
+          <el-col :span="21">
             <el-input v-model="articleTitle" placeholder="文章标题" clearable size="large"></el-input>
+          </el-col>
+           <el-col :span="2" :offset="1">
+            <el-checkbox v-model="isHide" class="hideCheck">隐藏</el-checkbox>
           </el-col>
         </el-row>
         <el-row>
@@ -18,7 +21,7 @@
             <el-input type="textarea" :rows="2" placeholder="文章概括" v-model="textarea"></el-input>
           </el-col>
         </el-row>
-        <el-row v-if="typeId==2">
+        <el-row v-if="typeId==2||typeId==3">
           <el-col :span="4">
             <el-select
               v-model="typeId"
@@ -51,6 +54,7 @@
               <el-option key="2" label="练习" value="2"></el-option>
               <el-option key="3" label="临摹" value="3"></el-option>
               <el-option key="4" label="学习" value="4"></el-option>
+              <el-option key="5" label="记录" value="5"></el-option>
             </el-select>
           </el-col>
           <el-col :span="4">
@@ -134,6 +138,7 @@
               <el-option key="1" label="原创" value="1"></el-option>
               <el-option key="0" label="转载" value="0"></el-option>
               <el-option key="4" label="学习" value="4"></el-option>
+              <el-option key="5" label="记录" value="5"></el-option>
             </el-select>
           </el-col>
           <el-col :span="5">
@@ -289,7 +294,8 @@ export default {
 			params: {
 			},
 			headers: {
-			}
+      },
+      isHide:false
     };
   },
   created() {
@@ -377,6 +383,11 @@ export default {
         var spilt = this.coverUrl.split("/");
         formData.append("cover", spilt[spilt.length - 1]);
       }
+      if(this.isHide==true){
+            formData.append("state", 2);
+      }else{
+            formData.append("state", 0);
+      }
       saveArticle(formData).then(response => {
         var res = response;
         if (res.result.code === 0) {
@@ -388,6 +399,7 @@ export default {
           this.isOriginal = "";
           this.content = "<p style='text-align: center;'>开始编写内容……</p>";
           this.coverUrl = "";
+          this.isHide=false;
         }
       });
     },
@@ -416,6 +428,11 @@ export default {
             }
             this.tempclassificationId = res.object.classificationId;
             this.typeId = res.object.typeId;
+            if(res.object.state===2){
+               this.isHide=true;
+            }else{
+              this.isHide=false;
+            }
           } else if (res.result.code == 1) {
             this.$message({
               type: "warning",
@@ -449,6 +466,11 @@ export default {
       formData.append("classificationId", this.classificationId);
       formData.append("isOriginal", this.isOriginal);
       formData.append("article", this.content);
+      if(this.isHide==true){
+            formData.append("state", 2);
+      }else{
+            formData.append("state", 0);
+      }
       if (this.coverUrl != "") {
         var spilt = this.coverUrl.split("/");
         formData.append("cover", spilt[spilt.length - 1]);
@@ -465,6 +487,7 @@ export default {
           this.isOriginal = "";
           this.content = "";
           this.coverUrl = "";
+          this.isHide=false;
         }
       });
     },
@@ -583,4 +606,10 @@ export default {
   height: 1px;
   border-top: solid #b2d1f7 1px;
 }
+
+.hideCheck{
+  float: right;
+  padding-top:10px;
+}
+
 </style>

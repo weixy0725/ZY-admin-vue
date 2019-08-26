@@ -37,6 +37,12 @@
       <el-table-column label="留言数量" width="110" align="center">
         <template slot-scope="scope">{{ scope.row.messageCount }}</template>
       </el-table-column>
+      <el-table-column label="状态" width="110" align="center">
+        <template slot-scope="scope">
+          <span v-if="scope.row.state==0" style="color:green">正常</span>
+          <span v-if="scope.row.state==2">隐藏</span>
+        </template>
+      </el-table-column>
       <el-table-column label="发布时间" width="110" align="center">
         <template slot-scope="scope">{{ scope.row.datetime }}</template>
       </el-table-column>
@@ -111,6 +117,7 @@ export default {
       // }
       parameters["pageIndex"] = this.pageNumber;
       parameters["pageSize"] = this.pageSize;
+      parameters["typeId"] = 0;
       getList(parameters).then(res => {
         if (res.result.code == 0) {
           this.list = res.array;

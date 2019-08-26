@@ -25,7 +25,7 @@ export function saveArticle(data) {
 
 export function getArticle(params) {
   return request({
-    url: '/articleManagement/article',
+    url: '/articleManagement/articleBack',
     method: 'get',
     params
   })
