@@ -26,10 +26,9 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        console.log(data.token)
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        var data = response
+        commit('SET_TOKEN', data.object.token)
+        setToken(data.object.token)
         resolve()
       }).catch(error => {
         console.log(error);
@@ -42,14 +41,14 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
-        const { data } = response
-
+        var data  = response
         if (!data) {
           reject('Verification failed, please Login again.')
         }
 
-        const { name, avatar } = data
-
+       var name = data.object.name
+       var avatar=data.object.avater
+       
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         resolve(data)
