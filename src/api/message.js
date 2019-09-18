@@ -23,3 +23,11 @@ export function saveMessage(params) {
         params
     })
 }
+
+export function sendToMail(params) {
+    return request({
+        url: '/messageManagement/sendMail',
+        method: 'post',
+        params
+    })
+}

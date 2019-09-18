@@ -41,9 +41,27 @@
           <span v-if="scope.row.state==1" style="color:red">已删除</span>
         </template>
       </el-table-column>
+      <el-table-column label="留言人/回复人" width="110" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.nickname }}
+        </template>
+      </el-table-column>
+      <el-table-column label="留言邮箱/回复邮箱" width="110" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.email }}
+        </template>
+      </el-table-column>
+       <el-table-column label="邮件发送状态" width="110" align="center">
+        <template slot-scope="scope">
+          <span v-if="scope.row.isSend==0">未发送</span>
+          <span v-if="scope.row.isSend==1" style="color:green">已发送</span>
+          <span v-if="scope.row.isSend==2" style="color:red">发送失败</span>
+        </template>
+      </el-table-column>
       <el-table-column align="center" prop="created_at" label="操作" width="200" fixed="right">
         <template slot-scope="scope">
           <el-button v-if="scope.row.type==1&&scope.row.state==0" type="primary" size="mini" @click="editFun(scope.row.id,0,scope.row.articleId)">回复</el-button>
+          <el-button v-if="scope.row.type==0&&scope.row.state==0" type="primary" size="mini" @click="sendMail(scope.row.id)">发送邮件</el-button>
           <el-button v-if="scope.row.state==0" type="warning" size="mini" @click="changeFun(scope.row.id,1)">删除</el-button>
           <el-button v-if="scope.row.state==1" type="info" size="mini" @click="changeFun(scope.row.id,0)">恢复</el-button>
         </template>
@@ -79,7 +97,7 @@
 </template>
 
 <script>
-import { getList,changeMessage,saveMessage } from "@/api/message";
+import { getList,changeMessage,saveMessage,sendToMail} from "@/api/message";
 
 export default {
   // filters: {
@@ -188,6 +206,34 @@ export default {
             this.$message({
               type: "success",
               message: "变更留言状态成功！"
+            });
+            this.fetchData();
+          } else if (res.result.code == 1) {
+            this.$message({
+              type: "warning",
+              message: res.result.info
+            });
+          } else if (res.result.code == -1) {
+            this.$message({
+              type: "warning",
+              message: res.result.developInfo
+            });
+          }
+        });
+      });
+    },
+    sendMail(id){
+       this.$confirm("确定发送邮件?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消"
+      }).then(() => {
+        var parameters = {};
+        parameters["id"] = id;
+        sendToMail(parameters).then(res => {
+          if (res.result.code == 0) {
+            this.$message({
+              type: "success",
+              message: "发送通知邮件成功！"
             });
             this.fetchData();
           } else if (res.result.code == 1) {
