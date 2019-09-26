@@ -21,7 +21,7 @@
             <el-input type="textarea" :rows="2" placeholder="文章概括" v-model="textarea"></el-input>
           </el-col>
         </el-row>
-        <el-row v-if="typeId==2||typeId==3">
+        <el-row><!-- v-if="typeId==2||typeId==3" -->
           <el-col :span="4">
             <el-select
               v-model="typeId"
@@ -107,7 +107,7 @@
             >更新文章内容</el-button>
           </el-col>
         </el-row>
-        <el-row v-else>
+        <!-- <el-row v-else>
           <el-col :span="5">
             <el-select
               v-model="typeId"
@@ -166,7 +166,7 @@
               v-else
             >更新文章内容</el-button>
           </el-col>
-        </el-row>
+        </el-row> -->
       </el-col>
     </el-row>
     <el-row>
